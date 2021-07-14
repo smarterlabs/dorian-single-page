@@ -1,0 +1,21 @@
+{
+  "name": "@app/orchestration",
+  "version": "1.0.0",
+  "license": "AVAILABLE AT cryolayer.com",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "node src/index",
+    "serve": "serve dist"
+  },
+  "dependencies": {
+    "@app/downloader": "^1.0.0",
+    "@app/webflow-plugin": "^1.0.0",
+    "cheerio": "^1.0.0-rc.10",
+    "fs-extra": "^10.0.0",
+    "globby": "^11.0.4"
+  },
+  "devDependencies": {
+    "del-cli": "^4.0.0",
+    "serve": "^12.0.0"
+  }
+}

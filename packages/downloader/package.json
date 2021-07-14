@@ -1,0 +1,26 @@
+{
+  "name": "@app/downloader",
+  "version": "1.0.0",
+  "license": "AVAILABLE AT cryolayer.com",
+  "main": "src/index.js",
+  "scripts": {
+    "clean": "del-cli dist",
+    "serve": "serve dist",
+    "test": "node test"
+  },
+  "dependencies": {
+    "axios": "^0.21.0",
+    "check-url-type": "^1.0.1",
+    "cheerio": "^1.0.0-rc.3",
+    "download": "^8.0.0",
+    "fs-extra": "^9.0.1",
+    "is-relative-url": "^3.0.0",
+    "lodash": "^4.17.20",
+    "replace-css-url": "^1.2.6",
+    "srcset": "^3.0.0"
+  },
+  "devDependencies": {
+    "del-cli": "^3.0.1",
+    "serve": "^11.3.2"
+  }
+}

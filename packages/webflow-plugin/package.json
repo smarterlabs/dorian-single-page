@@ -1,0 +1,26 @@
+{
+  "name": "@app/webflow-plugin",
+  "version": "1.0.0",
+  "license": "AVAILABLE AT cryolayer.com",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "node src/index",
+    "serve": "serve dist"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.10",
+    "fs-extra": "^10.0.0",
+    "globby": "^11.0.4",
+    "lodash": "^4.17.21",
+    "postcss": "^8.3.5",
+    "posthtml": "^0.16.4",
+    "posthtml-webp": "^2.1.0",
+    "webp-converter": "^2.3.3",
+    "webp-in-css": "^0.6.0"
+  },
+  "devDependencies": {
+    "del-cli": "^4.0.0",
+    "serve": "^12.0.0"
+  }
+}
