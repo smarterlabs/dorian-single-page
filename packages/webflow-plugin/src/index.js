@@ -105,6 +105,19 @@ module.exports = function webflowPlugin(){
 			}
 		})
 
+		// Need to output as `{{name}}.html` instead of `index.html` for pretty URLs
+		this.on(`writeFile`, async obj => {
+			let { outputPath } = obj
+			
+			// Split path into parts
+			const parts = outputPath.split(`/`)
+			const name = parts.pop()
+			const dir = parts.pop()
+			if(name === `index.html`){
+				obj.outputPath = parts.join(`/`) + `/` + dir + `.html`
+			}
+		})
+
 		this.on(`complete`, async () => {
 			const dist = this.dist
 
