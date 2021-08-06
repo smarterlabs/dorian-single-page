@@ -2,17 +2,17 @@ const download = require(`@app/downloader`)
 const webflowPlugin = require(`@app/webflow-plugin`)
 
 // Exit if environment variables are missing
-if(!process.env.WEBFLOW_URL){
+let siteUrl = process.env.WEBFLOW_URL
+let destinationOrigin = process.env.URL || process.env.VERCEL_URL || process.env.DEPLOY_URL
+if(!siteUrl){
 	console.error(`No "WEBFLOW_URL" environment variable set.`)
 	process.exit(1)
 }
-if(!process.env.URL){
-	console.error(`No "URL" environment variable set.`)
+if(!destinationOrigin){
+	console.error(`No "URL", "VERCEL_URL", or "DEPLOY_URL" environment variable set.`)
 	process.exit(1)
 }
 
-let siteUrl = process.env.WEBFLOW_URL
-let destinationOrigin = process.env.URL
 
 // Normalize links
 if(siteUrl.indexOf(`://`) === -1){
@@ -28,12 +28,17 @@ if(destinationOrigin[destinationOrigin.length - 1] !== `/`){
 	destinationOrigin = destinationOrigin + `/`
 }
 
+const entry = [
+	siteUrl,
+	`${siteUrl}/robots.txt`,
+]
+if(process.env.BCP){
+	entry.push(`${siteUrl}/sitemap.xml`)
+}
+
 // Download site
 download({
-	entry: [
-		siteUrl,
-		`${siteUrl}/robots.txt`,
-	],
+	entry,
 	domains: [
 		{ domain: siteUrl.split(`://`)[1], path: `/` },
 		{ domain: `assets.website-files.com`, path: `/assets` },
@@ -41,7 +46,7 @@ download({
 	],
 	replaceOrigin: destinationOrigin,
 	concurrency: 10,
-	dist: `../../dist`,
+	dist: `../../public`,
 	plugins: [
 		webflowPlugin(),
 	],

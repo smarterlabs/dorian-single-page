@@ -1,8 +1,10 @@
 [build]
   command = "yarn build"
-  publish = "dist/"
+  publish = "public/"
 [build.environment]
   NETLIFY_USE_YARN = "true"
+[build.processing.html]
+  pretty_urls = true
 
 [template]
   incoming-hooks = ["Webflow"]
@@ -10,11 +12,5 @@
 [template.environment]
   WEBFLOW_URL = ""
 
-[[plugins]]
-package = "netlify-plugin-subfont"
-
-[[plugins]]
-package = "netlify-plugin-image-optim"
-
-[[plugins]]
-package = "netlify-plugin-inline-critical-css"
+# [[plugins]]
+# package = "netlify-plugin-subfont"

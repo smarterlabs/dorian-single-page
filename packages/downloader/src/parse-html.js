@@ -6,6 +6,9 @@ const linkEls = {
 	script: `src`,
 	img: `src`,
 }
+if(process.env.BCP){
+	linkEls.a = `href`
+} 
 
 module.exports = async function parseHtml(data, from){
 	const $ = cheerio.load(data, { decodeEntities: false })
@@ -38,8 +41,6 @@ module.exports = async function parseHtml(data, from){
 		// Parse srcset
 		$(`img`).each((_, el) => {
 			const node = $(el)
-
-			// srcset
 			const str = node.attr(`srcset`)
 			if(str){
 				const parsed = srcset.parse(str)
