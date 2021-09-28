@@ -32,6 +32,18 @@ module.exports = async function parse(url){
 				return
 			}
 		}
+		// Add to final URLs list
+		// If URL path isn't 404
+		const parsed = new URL(url)
+		const pathname = parsed.pathname
+		let fullUrl = url
+		// Add slash if necessary
+		if(pathname == `/` && fullUrl[fullUrl.length - 1] != `/`){
+			fullUrl += `/`
+		}
+		if(pathname != `/404` && pathname != `/404.html` && this.finalUrls.indexOf(fullUrl) === -1){
+			this.finalUrls.push(fullUrl)
+		}
 		const newContents = await this.parseHtml(result.data, url)
 		await this.writeFile(url, newContents, `html`)
 	}

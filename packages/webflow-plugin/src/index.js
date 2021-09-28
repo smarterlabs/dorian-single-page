@@ -9,6 +9,16 @@ const postcss = require('postcss')
 const postcssWebp = require(`webp-in-css/plugin`)
 const inlineCriticalCss = require(`netlify-plugin-inline-critical-css`).onPostBuild
 const imageOptim = require(`netlify-plugin-image-optim`).onPostBuild
+const { SitemapStream, streamToPromise } = require( 'sitemap' )
+
+
+let destinationOrigin = process.env.URL || process.env.VERCEL_URL || process.env.DEPLOY_URL
+if(destinationOrigin.indexOf(`://`) === -1){
+	destinationOrigin = `https://` + destinationOrigin
+}
+if(destinationOrigin[destinationOrigin.length - 1] !== `/`){
+	destinationOrigin = destinationOrigin + `/`
+}
 
 webp.grant_permission()
 let origin = process.env.WEBFLOW_URL
@@ -246,6 +256,32 @@ module.exports = function webflowPlugin(){
 				}
 			}
 
+			const replaceSitemap = toBool(process.env.REPLACE_SITEMAP)
+			if(replaceSitemap){
+				// Create sitemap from final URLs list
+				console.log(`Creating sitemap...`)
+
+				// Create a stream to write to
+				const stream = new SitemapStream({
+					hostname: destinationOrigin,
+				})
+			 
+				// Loop over your links and add them to your stream
+				this.finalUrls.forEach( link => {
+					// Remove origin from link
+					link = link.replace(process.env.WEBFLOW_URL, ``)
+					return stream.write({
+						url: link,
+					})
+				})
+				stream.end()
+			 
+				const sitemapRes = await streamToPromise(stream).then( data => data.toString() )
+				const sitemapPath = join(dist, `sitemap.xml`)
+				console.log(`Writing new replacement sitemap...`)
+				await outputFile(sitemapPath, sitemapRes)
+				
+			}
 
 
 			// Remove excluded pages from sitemap
@@ -270,7 +306,7 @@ module.exports = function webflowPlugin(){
 					}
 				})
 				const newXml = $.xml()
-				console.log(`Writing new Sitemap...`)
+				console.log(`Writing new Sitemap with excluded pages...`)
 				await outputFile(xmlPath, newXml)
 			}
 

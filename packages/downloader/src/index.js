@@ -29,6 +29,7 @@ function Downloader(userOptions){
 	this.parsing = 0
 	this.queue = [ ...options.entry ]
 	this.knownUrls = [ ...options.entry ]
+	this.finalUrls = []
 	this.events = {}
 	options.plugins.forEach(plugin => {
 		plugin.bind(this)()
