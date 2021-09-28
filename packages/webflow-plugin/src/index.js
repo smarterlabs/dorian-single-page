@@ -7,7 +7,6 @@ const posthtmlWebp = require(`posthtml-webp`)
 const webp = require(`webp-converter`)
 const postcss = require('postcss')
 const postcssWebp = require(`webp-in-css/plugin`)
-const { exists } = require('fs-extra')
 const inlineCriticalCss = require(`netlify-plugin-inline-critical-css`).onPostBuild
 const imageOptim = require(`netlify-plugin-image-optim`).onPostBuild
 
@@ -39,7 +38,6 @@ function toBool(str){
 // Check for feature flags
 let useWebp = toBool(process.env.WEBP)
 let inlineCss = toBool(process.env.INLINE_CSS)
-let replaceRobotsTxt = toBool(process.env.REPLACE_ROBOTS_TXT)
 
 module.exports = function webflowPlugin(){
 	let excludeFromSitemap = []
@@ -212,10 +210,14 @@ module.exports = function webflowPlugin(){
 			
 
 			// Create robots.txt if it doesn't exist
-			const newRobotsTxt = replaceRobotsTxt || !(await exists(join(dist, `robots.txt`)))
-			if (newRobotsTxt) {
-				console.log(`Creating robots.txt...`)
+			const robotsTxt = process.env.REPLACE_ROBOTS_TXT
+			if (robotsTxt === `enabled`) {
+				console.log(`Creating search index enabled robots.txt...`)
 				await outputFile(join(dist, `robots.txt`), ``)
+			}
+			else if(robotsTxt === `disabled`){
+				console.log(`Creating search index disabled robots.txt...`)
+				await outputFile(join(dist, `robots.txt`), `User-agent: *\nDisallow: /`)
 			}
 
 
