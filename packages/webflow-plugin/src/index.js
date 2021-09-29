@@ -238,13 +238,20 @@ module.exports = function webflowPlugin(){
 				for(let file of htmlFiles){
 					let html = await readFile(file, `utf8`)
 					// Add webp support to image tags
-					const result = await posthtml()
-						.use(posthtmlWebp({
-							extensionIgnore: [`svg`],
-						}))
-						.process(html)
-					html = result.html
-					await outputFile(file, html)
+					let result
+					try{
+						result = await posthtml()
+							.use(posthtmlWebp({
+								extensionIgnore: [`svg`],
+							}))
+							.process(html)
+						html = result.html
+						await outputFile(file, html)
+					}
+					catch(err){
+						console.log(`Couldn't process WebP`)
+						console.error(err)
+					}
 				}
 
 				// Create webp images
