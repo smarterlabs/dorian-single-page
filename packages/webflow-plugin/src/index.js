@@ -317,6 +317,23 @@ module.exports = function webflowPlugin(){
 				await outputFile(xmlPath, newXml)
 			}
 
+			// Remove Webflow branding
+			if(toBool(process.env.REMOVE_WEBFLOW_BRANDING)){
+				const globPath = join(this.dist, `**/*.js`)
+				console.log(`globPath`, globPath)
+				const jsFiles = await globby(globPath)
+				const oldStr = `(e=e||(n=t('<a class="w-webflow-badge"></a>')`
+				const newStr = `(true||(n=t('<a class="w-webflow-badge"></a>')`
+				for(let filePath of jsFiles){
+					const jsStr = await readFile(filePath, `utf8`)
+					if(jsStr.indexOf(oldStr) > -1){
+						console.log(`Replacing Webflow branding...`)
+						const result = jsStr.replace(oldStr, newStr)
+						await outputFile(filePath, result)
+					}
+				}
+			}
+
 
 			// Write redirects file
 			let origin = process.env.WEBFLOW_URL
