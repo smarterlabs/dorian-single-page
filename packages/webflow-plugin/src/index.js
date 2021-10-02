@@ -10,7 +10,7 @@ const postcssWebp = require(`webp-in-css/plugin`)
 const inlineCriticalCss = require(`netlify-plugin-inline-critical-css`).onPostBuild
 const imageOptim = require(`netlify-plugin-image-optim`).onPostBuild
 const { SitemapStream, streamToPromise } = require( 'sitemap' )
-
+const axios = require(`axios`)
 
 let destinationOrigin = process.env.URL || process.env.VERCEL_URL || process.env.DEPLOY_URL
 if(destinationOrigin.indexOf(`://`) === -1){
@@ -336,20 +336,22 @@ module.exports = function webflowPlugin(){
 
 
 			// Write redirects file
-			let origin = process.env.WEBFLOW_URL
-			while(origin[origin.length - 1] === `/`){
-				origin = origin.substring(0, origin.length - 1)
-			}
-			if(process.env.VERCEL){
-				const template = await readFile(join(__dirname, `vercel.json.template`), `utf8`)
-				let redirectsData = template.replace(/{{domain}}/g, origin)
-				await outputFile(join(dist, `vercel.json`), redirectsData)
-			}
-			else{
-				const template = await readFile(join(__dirname, `_redirects.template`), `utf8`)
-				let redirectsData = template.replace(/{{domain}}/g, origin)
-				await outputFile(join(dist, `_redirects`), redirectsData)
-			}
+			const redirectsRes = await axios({
+				method: `get`,
+				url: `https://app.cryolayer.com/api/redirects/${process.env.SITE_ID}`,
+			}).catch(err => {
+				console.log(`Error fetching redirects:`)
+				console.error(err)
+			})
+			const redirects = redirectsRes.data || []
+			console.log(`redirects`, redirects)
+			const redirectsStr = redirects.map(redirect => {
+				return `${redirect.from}\t${redirect.to}\t${redirect.statusCode || 301}`
+			}).join(`\n`)
+			console.log(`Writing redirects file...`)
+			console.log(redirectsStr)
+			await outputFile(join(dist, `_redirects`), redirectsStr)
+
 
 		})
 	}
