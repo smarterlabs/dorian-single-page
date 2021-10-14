@@ -339,21 +339,26 @@ module.exports = function webflowPlugin(){
 
 
 			// Write redirects file
-			const redirectsRes = await axios({
-				method: `get`,
-				url: `https://app.cryolayer.com/api/redirects/${process.env.SITE_ID}`,
-			}).catch(err => {
-				console.log(`Error fetching redirects:`)
-				console.error(err)
-			})
-			const redirects = redirectsRes.data || []
-			console.log(`redirects`, redirects)
-			const redirectsStr = redirects.map(redirect => {
-				return `${redirect.from}\t${redirect.to}\t${redirect.statusCode || 301}`
-			}).join(`\n`)
-			console.log(`Writing redirects file...`)
-			console.log(redirectsStr)
-			await outputFile(join(dist, `_redirects`), redirectsStr)
+			if(process.env.SITE_ID){
+				const redirectsRes = await axios({
+					method: `get`,
+					url: `https://app.cryolayer.com/api/redirects/${process.env.SITE_ID}`,
+				}).catch(err => {
+					console.log(`No redirects found`)
+					// console.error(err)
+				})
+				const redirects = redirectsRes.data || []
+				console.log(`redirects`, redirects)
+				const redirectsStr = redirects.map(redirect => {
+					return `${redirect.from}\t${redirect.to}\t${redirect.statusCode || 301}`
+				}).join(`\n`)
+				console.log(`Writing redirects file...`)
+				console.log(redirectsStr)
+				await outputFile(join(dist, `_redirects`), redirectsStr)
+			}
+			else{
+				console.log(`No Netlify site ID found`)
+			}
 
 
 		})
