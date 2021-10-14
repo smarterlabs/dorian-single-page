@@ -17,14 +17,12 @@ module.exports = function addToQueue(url, from){
 
 	let obj
 	try{
-		console.log(`Creating URL...`)
 		obj = new URL(url)
 	}
 	catch(e){
 		console.log(`Error creating URL: ${e}`)
 		return
 	}
-	console.log(`Created URL`)
 	url = obj.origin + obj.pathname + obj.search
 	if(knownUrls.indexOf(url) === -1 && url.charAt(0) != `#`){
 		const domainPath = this.findDomainPath(url)
