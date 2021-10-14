@@ -207,15 +207,18 @@ module.exports = function webflowPlugin(){
 			}
 
 			// Optimize images
-			console.log(`Optimizing images...`)
-			await imageOptim({
-				constants: {
-					PUBLISH_DIR,
-				},
-			}).catch((err) => {
-				console.error(err)
-				// process.exit(1)
-			})
+			const optimizeImages = toBool(process.env.OPTIMIZE_IMAGES)
+			if(optimizeImages){
+				console.log(`Optimizing images...`)
+				await imageOptim({
+					constants: {
+						PUBLISH_DIR,
+					},
+				}).catch((err) => {
+					console.error(err)
+					// process.exit(1)
+				})
+			}
 			
 			
 
