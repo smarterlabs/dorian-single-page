@@ -124,7 +124,14 @@ function findDomainPath(url){
 	if(url.indexOf(`//`) === 0){
 		url = `${this.protocol}:${url}`
 	}
-	let { host } = new URL(url)
+	let obj
+	try{
+		obj = new URL(url)
+	}
+	catch(e){
+		return false
+	}
+	let { host } = obj
 	for(let i = this.domains.length; i--;){
 		const { domain, path } = this.domains[i]
 		if(domain == host){
