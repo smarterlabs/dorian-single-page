@@ -1,5 +1,5 @@
 {
-  "name": "@smarterlabs/cryolayer-single-page-ssg",
+  "name": "@smarterlabs/dorian-ssg",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Kennedy Rose <kennedyianrose@gmail.com>",
