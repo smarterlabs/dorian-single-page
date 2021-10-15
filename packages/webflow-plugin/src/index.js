@@ -322,17 +322,31 @@ module.exports = function webflowPlugin(){
 
 			// Remove Webflow branding
 			if(toBool(process.env.REMOVE_WEBFLOW_BRANDING)){
+				console.log(`Removing Webflow branding...`)
 				const globPath = join(this.dist, `**/*.js`)
-				console.log(`globPath`, globPath)
 				const jsFiles = await globby(globPath)
+				console.log(`jsFiles`, jsFiles)
+
 				const oldStr = `(e=e||(n=t('<a class="w-webflow-badge"></a>')`
 				const newStr = `(true||(n=t('<a class="w-webflow-badge"></a>')`
+
+				const fullOldStr = `var shouldBrand = $html.attr('data-wf-status');`
+				const fullNewStr = `var shouldBrand = false;`
+
 				for(let filePath of jsFiles){
 					const jsStr = await readFile(filePath, `utf8`)
 					if(jsStr.indexOf(oldStr) > -1){
 						console.log(`Replacing Webflow branding...`)
 						const result = jsStr.replace(oldStr, newStr)
 						await outputFile(filePath, result)
+					}
+					else if(jsStr.indexOf(fullOldStr) > -1){
+						console.log(`Replacing Webflow branding...`)
+						const result = jsStr.replace(fullOldStr, fullNewStr)
+						await outputFile(filePath, result)
+					}
+					else{
+						console.log(`Webflow branding not found in "${filePath}"`)
 					}
 				}
 			}
