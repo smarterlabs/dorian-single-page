@@ -126,7 +126,7 @@ module.exports = function webflowPlugin(){
 						$el.attr(`rel`, `noopener noreferrer`)
 					}
 					// Make internal links external
-					if (!process.env.BCP) {
+					else if (!process.env.BCP) {
 						$el.attr(`href`, `${origin}${href.replace(`/`, ``)}`)
 					}
 				}
